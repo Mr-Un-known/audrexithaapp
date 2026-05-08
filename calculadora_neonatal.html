@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Balance Neonatal">
+<title>Balance Neonatal</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    background: #f2f2f7;
+    color: #1c1c1e;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  header {
+    background: #ffffff;
+    padding: 52px 20px 16px;
+    border-bottom: 0.5px solid #c6c6c8;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1c1c1e;
+  }
+
+  header p {
+    font-size: 13px;
+    color: #8e8e93;
+    margin-top: 2px;
+  }
+
+  .section {
+    background: #ffffff;
+    border-radius: 12px;
+    margin: 20px 16px 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px 6px;
+    background: #f2f2f7;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    padding: 13px 16px;
+    border-bottom: 0.5px solid #f2f2f7;
+  }
+
+  .field:last-child { border-bottom: none; }
+
+  .field label {
+    font-size: 15px;
+    color: #1c1c1e;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .field label small {
+    display: block;
+    font-size: 12px;
+    color: #8e8e93;
+    margin-top: 1px;
+  }
+
+  .field input[type="number"] {
+    width: 100px;
+    text-align: right;
+    font-size: 17px;
+    color: #007aff;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    -webkit-appearance: none;
+  }
+
+  .field input[type="number"]::placeholder { color: #c7c7cc; }
+
+  .field .unit {
+    font-size: 15px;
+    color: #8e8e93;
+    margin-left: 4px;
+    white-space: nowrap;
+  }
+
+  .radio-group {
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .radio-group label {
+    flex: 1;
+    text-align: center;
+    padding: 10px 6px;
+    font-size: 13px;
+    color: #8e8e93;
+    border-right: 0.5px solid #f2f2f7;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  }
+
+  .radio-group label:last-child { border-right: none; }
+
+  .radio-group input[type="radio"] { display: none; }
+
+  .radio-group input[type="radio"]:checked + label {
+    background: #e8f4ff;
+    color: #007aff;
+    font-weight: 600;
+  }
+
+  .radio-group label small {
+    display: block;
+    font-size: 11px;
+    color: #8e8e93;
+    margin-top: 2px;
+  }
+
+  .radio-group input[type="radio"]:checked + label small { color: #007aff; }
+
+  .btn-calc {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 20px 16px 0;
+    padding: 16px;
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    -webkit-appearance: none;
+  }
+
+  .btn-calc:active { opacity: 0.85; transform: scale(0.98); }
+
+  .results {
+    display: none;
+    margin: 20px 16px 0;
+  }
+
+  .result-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .result-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .result-icon.purple { background: #f0e9ff; }
+  .result-icon.blue   { background: #e3f0ff; }
+  .result-icon.teal   { background: #e1f5ee; }
+  .result-icon.orange { background: #fff3e3; }
+  .result-icon.green  { background: #eaf3de; }
+
+  .result-info { flex: 1; min-width: 0; }
+
+  .result-label {
+    font-size: 13px;
+    color: #8e8e93;
+    line-height: 1.3;
+  }
+
+  .result-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin-top: 2px;
+  }
+
+  .result-unit {
+    font-size: 14px;
+    font-weight: 400;
+    color: #8e8e93;
+  }
+
+  .result-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .badge-ok  { background: #eaf3de; color: #3b6d11; }
+  .badge-warn{ background: #faeeda; color: #854f0b; }
+  .badge-bad { background: #fcebeb; color: #a32d2d; }
+
+  .btn-reset {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    color: #8e8e93;
+    border: none;
+    font-size: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .error-msg {
+    background: #fcebeb;
+    color: #a32d2d;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin: 12px 16px 0;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚕️ Balance Neonatal</h1>
+  <p>Calculadora pediátrica</p>
+</header>
+
+<div class="section-title" style="margin: 20px 16px 0; background: transparent; padding-left: 4px;">Pesos</div>
+<div class="section">
+  <div class="field">
+    <label>Peso al nacer <small>Registro inicial</small></label>
+    <input type="number" id="peso_nacer" placeholder="0.000" step="0.001" min="0">
+    <span class="unit">kg</span>
+  </div>
+  <div class="field">
+    <label>Peso actual <small>Medición actual</small></label>
+    <input type="number" id="peso_actual" placeholder="0.000" step="0.001" min="0">
+    <span class="unit">kg</span>
+  </div>
+  <div class="field">
+    <label>Peso previo <small>Medición anterior</small></label>
+    <input type="number" id="peso_previo" placeholder="0.000" step="0.001" min="0">
+    <span class="unit">kg</span>
+  </div>
+</div>
+
+<div class="section-title" style="margin: 20px 16px 0; background: transparent; padding-left: 4px;">Líquidos</div>
+<div class="section">
+  <div class="field">
+    <label>Líquidos administrados</label>
+    <input type="number" id="liq_admin" placeholder="0" step="1" min="0">
+    <span class="unit">cc</span>
+  </div>
+  <div class="field">
+    <label>Líquidos eliminados</label>
+    <input type="number" id="liq_elim" placeholder="0" step="1" min="0">
+    <span class="unit">cc</span>
+  </div>
+</div>
+
+<div class="section-title" style="margin: 20px 16px 0; background: transparent; padding-left: 4px;">Tipo de paciente</div>
+<div class="section">
+  <div class="radio-group">
+    <input type="radio" name="factor" id="r20" value="20">
+    <label for="r20">🍼 A término <small>Factor 20</small></label>
+    <input type="radio" name="factor" id="r30" value="30">
+    <label for="r30">🫁 Prematuro <small>Factor 30</small></label>
+    <input type="radio" name="factor" id="r40" value="40" checked>
+    <label for="r40">📅 &lt;7 días <small>Factor 40</small></label>
+  </div>
+</div>
+
+<div class="error-msg" id="error_msg">⚠️ Por favor completa todos los campos antes de calcular.</div>
+
+<button class="btn-calc" onclick="calcular()">Calcular resultados</button>
+
+<div class="results" id="results">
+  <div class="result-card">
+    <div class="result-icon purple">📉</div>
+    <div class="result-info">
+      <div class="result-label">% Pérdida de peso<br>(menores de 7 días)</div>
+      <div class="result-value" id="r_perdida">— <span class="result-unit">%</span></div>
+      <span class="result-badge" id="b_perdida"></span>
+    </div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-icon blue">💧</div>
+    <div class="result-info">
+      <div class="result-label">Tasa hídrica</div>
+      <div class="result-value" id="r_tasa">— <span class="result-unit">cc/kg/día</span></div>
+    </div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-icon teal">🌫️</div>
+    <div class="result-info">
+      <div class="result-label">Pérdidas insensibles</div>
+      <div class="result-value" id="r_insensibles">— <span class="result-unit">cc</span></div>
+    </div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-icon orange">⚖️</div>
+    <div class="result-info">
+      <div class="result-label">Balance hídrico total</div>
+      <div class="result-value" id="r_balance">— <span class="result-unit">cc</span></div>
+      <span class="result-badge" id="b_balance"></span>
+    </div>
+  </div>
+
+  <div class="result-card">
+    <div class="result-icon green">🚽</div>
+    <div class="result-info">
+      <div class="result-label">Gasto urinario</div>
+      <div class="result-value" id="r_gasto">— <span class="result-unit">cc/kg/hr</span></div>
+      <span class="result-badge" id="b_gasto"></span>
+    </div>
+  </div>
+
+  <button class="btn-reset" onclick="resetear()">↩ Limpiar y calcular de nuevo</button>
+</div>
+
+<script>
+function val(id) {
+  return parseFloat(document.getElementById(id).value);
+}
+
+function calcular() {
+  const pn = val('peso_nacer');
+  const pa = val('peso_actual');
+  const pp = val('peso_previo');
+  const la = val('liq_admin');
+  const le = val('liq_elim');
+  const factor = parseFloat(document.querySelector('input[name="factor"]:checked').value);
+
+  const errEl = document.getElementById('error_msg');
+
+  if ([pn, pa, pp, la, le].some(v => isNaN(v) || v < 0)) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const perdida   = ((pn - pa) / pn) * 100;
+  const tasa      = la / pp;
+  const insens    = factor * pp;
+  const balance   = la - le;
+  const gasto     = le / (pp * 24);
+
+  document.getElementById('r_perdida').innerHTML    = perdida.toFixed(2) + ' <span class="result-unit">%</span>';
+  document.getElementById('r_tasa').innerHTML       = tasa.toFixed(2) + ' <span class="result-unit">cc/kg/día</span>';
+  document.getElementById('r_insensibles').innerHTML= insens.toFixed(2) + ' <span class="result-unit">cc</span>';
+  document.getElementById('r_balance').innerHTML    = balance.toFixed(1) + ' <span class="result-unit">cc</span>';
+  document.getElementById('r_gasto').innerHTML      = gasto.toFixed(2) + ' <span class="result-unit">cc/kg/hr</span>';
+
+  const bPerdida = document.getElementById('b_perdida');
+  if (perdida <= 7) { bPerdida.textContent = '✓ Normal (≤7%)'; bPerdida.className = 'result-badge badge-ok'; }
+  else if (perdida <= 10) { bPerdida.textContent = '⚠ Pérdida moderada'; bPerdida.className = 'result-badge badge-warn'; }
+  else { bPerdida.textContent = '✗ Pérdida elevada (>10%)'; bPerdida.className = 'result-badge badge-bad'; }
+
+  const bBal = document.getElementById('b_balance');
+  if (balance >= 0) { bBal.textContent = '↑ Balance positivo'; bBal.className = 'result-badge badge-ok'; }
+  else { bBal.textContent = '↓ Balance negativo'; bBal.className = 'result-badge badge-warn'; }
+
+  const bGasto = document.getElementById('b_gasto');
+  if (gasto >= 1 && gasto <= 3) { bGasto.textContent = '✓ Normal (1–3 cc/kg/hr)'; bGasto.className = 'result-badge badge-ok'; }
+  else if (gasto < 1) { bGasto.textContent = '⚠ Oliguria (<1 cc/kg/hr)'; bGasto.className = 'result-badge badge-warn'; }
+  else { bGasto.textContent = '⚠ Poliuria (>3 cc/kg/hr)'; bGasto.className = 'result-badge badge-warn'; }
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetear() {
+  ['peso_nacer','peso_actual','peso_previo','liq_admin','liq_elim'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('r40').checked = true;
+  document.getElementById('results').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
