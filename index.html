@@ -375,7 +375,7 @@ function calcular() {
   const perdida   = ((pn - pa) / pn) * 100;
   const tasa      = la / pp;
   const insens    = factor * pp;
-  const balance   = la - le;
+  const balance   = la-(le+insens);
   const gasto     = le / (pp * 24);
 
   document.getElementById('r_perdida').innerHTML    = perdida.toFixed(2) + ' <span class="result-unit">%</span>';
@@ -394,9 +394,9 @@ function calcular() {
   else { bBal.textContent = '↓ Balance negativo'; bBal.className = 'result-badge badge-warn'; }
 
   const bGasto = document.getElementById('b_gasto');
-  if (gasto >= 1 && gasto <= 3) { bGasto.textContent = '✓ Normal (1–3 cc/kg/hr)'; bGasto.className = 'result-badge badge-ok'; }
+  if (gasto >= 1 && gasto <= 3) { bGasto.textContent = '✓ Normal (0.5–6 cc/kg/hr)'; bGasto.className = 'result-badge badge-ok'; }
   else if (gasto < 1) { bGasto.textContent = '⚠ Oliguria (<1 cc/kg/hr)'; bGasto.className = 'result-badge badge-warn'; }
-  else { bGasto.textContent = '⚠ Poliuria (>3 cc/kg/hr)'; bGasto.className = 'result-badge badge-warn'; }
+  else { bGasto.textContent = '⚠ Poliuria (>6 cc/kg/hr)'; bGasto.className = 'result-badge badge-warn'; }
 
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
