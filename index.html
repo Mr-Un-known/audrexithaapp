@@ -339,6 +339,14 @@
     </div>
   </div>
 
+   <div class="result-card">
+    <div class="result-icon orange">🗑️</div>
+    <div class="result-info">
+      <div class="result-label">Eliminados totales (Elim. + Pérd. insensibles)</div>
+      <div class="result-value" id="r_eliminados">— <span class="result-unit">cc</span></div>
+    </div>
+  </div>
+
   <div class="result-card">
     <div class="result-icon green">🚽</div>
     <div class="result-info">
@@ -382,6 +390,7 @@ function calcular() {
   document.getElementById('r_tasa').innerHTML       = tasa.toFixed(2) + ' <span class="result-unit">cc/kg/día</span>';
   document.getElementById('r_insensibles').innerHTML= insens.toFixed(2) + ' <span class="result-unit">cc</span>';
   document.getElementById('r_balance').innerHTML    = balance.toFixed(1) + ' <span class="result-unit">cc</span>';
+  document.getElementById('r_eliminados').innerHTML = (le + insens).toFixed(2) + ' <span class="result-unit">cc</span>';
   document.getElementById('r_gasto').innerHTML      = gasto.toFixed(2) + ' <span class="result-unit">cc/kg/hr</span>';
 
   const bPerdida = document.getElementById('b_perdida');
